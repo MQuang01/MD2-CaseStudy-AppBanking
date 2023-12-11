@@ -1,0 +1,8 @@
+Account
+id,username,psw,phoneNum,fullName,doB,ranked
+1,0934960651,123123,0934960651,Minh Quang,2000-11-21,1.
+
+Admin
+id,username,psw,fullName,request
+1,admin,123,Minh Quang,5
+
