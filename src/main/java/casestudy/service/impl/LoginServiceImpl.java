@@ -1,14 +1,8 @@
 package casestudy.service.impl;
 
-import casestudy.model.Member;
-import casestudy.model.Admin;
-import casestudy.model.ERank;
-import casestudy.model.Information;
+import casestudy.model.*;
 import casestudy.service.LoginService;
-import casestudy.utils.Config;
-import casestudy.utils.DateUtils;
-import casestudy.utils.FileUtils;
-import casestudy.utils.InputUtils;
+import casestudy.utils.*;
 
 import java.time.LocalDate;
 import java.util.ArrayList;
@@ -28,8 +22,12 @@ public class LoginServiceImpl extends BaseService implements LoginService {
     public void setCurrentIdInfor() {
         List<Information> inforList = getAllInfor();
 
-        inforList.sort((o1, o2) -> Long.compare(o1.getId(), o2.getId()));
-        Information.currentId = inforList.get(inforList.size() - 1).getId();
+        if(inforList.isEmpty()){
+            Information.currentId = 1;
+        }else {
+            inforList.sort((o1, o2) -> Long.compare(o1.getId(), o2.getId()));
+            Information.currentId = inforList.get(inforList.size() - 1).getId();
+        }
     }
     public void initAdmin() {
         List<Admin> adminList = new ArrayList<>();
@@ -42,8 +40,12 @@ public class LoginServiceImpl extends BaseService implements LoginService {
     public void setCurrentIdAdmin() {
         List<Admin> adminList = getAllAdmin();
 
-        adminList.sort((o1, o2) -> Long.compare(o1.getId(), o2.getId()));
-        Admin.currentId = adminList.get(adminList.size() - 1).getId();
+        if (adminList.isEmpty()) {
+            Admin.currentId = 1;
+        }else {
+            adminList.sort((o1, o2) -> Long.compare(o1.getId(), o2.getId()));
+            Admin.currentId = adminList.get(adminList.size() - 1).getId();
+        }
     }
     public void initMember() {
         List<Member> members = new ArrayList<>();
@@ -56,12 +58,45 @@ public class LoginServiceImpl extends BaseService implements LoginService {
     public void setCurrentIdMember() {
         List<Member> members = getAllMember();
 
-        members.sort((o1, o2) -> Long.compare(o1.getId(), o2.getId()));
-        Member.currentId = members.get(members.size() - 1).getId();
+        if (members.isEmpty()){
+            Member.currentId = 1;
+        }else {
+            members.sort((o1, o2) -> Long.compare(o1.getId(), o2.getId()));
+            Member.currentId = members.get(members.size() - 1).getId();
+        }
+    }
+    @Override
+    public void initHistory() {
+
+        List<History> histories = new ArrayList<>();
+        Member member = new Member(++Member.currentId, "Quangpro", "123123", DateUtils.parse("2001-2-1"), 300000, ERank.NORMAL);
+        histories.add(new History(++History.currentId, member, "+300000", "Nạp tiền", DateUtils.parse("2023-11-12")));
+
+        FileUtils.writeFile(histories, Config.PATH_FILE_HISTORY);
+    }
+    @Override
+    public void setCurrentIdHistory() {
+        List<History> histories = getAllHistory();
+
+        if (histories.isEmpty()){
+            Member.currentId = 1;
+        }else {
+            histories.sort((o1, o2) -> Long.compare(o1.getId(), o2.getId()));
+            History.currentId = histories.get(histories.size() - 1).getId();
+        }
     }
 
 
-    public void checkLogin(String username, String psw) {
+    public void checkLogin() {
+        System.out.println("Nhập 0 để quay lại");
+        String username = InputUtils.getString("Nhập tài khoản: ");
+        if (username.equals("0")){
+            callLogInView();
+            return;
+        }
+
+        String psw = InputUtils.getString("Nhập mật khẩu: ");
+
         if (username.contains("admin")) {
             List<Admin> adminList = getAllAdmin();
             for (Admin ad : adminList) {
@@ -89,19 +124,31 @@ public class LoginServiceImpl extends BaseService implements LoginService {
 
     @Override
     public void inputInforSignIn() {
+        System.out.println("Nhập 'q' để thoát");
         String fullName = InputUtils.getString("Nhập họ và tên: ");
-        String phoneNum = InputUtils.getPhoneNumber("Mời nhập số điện thoại: ");
-        LocalDate doB = DateUtils.parse(InputUtils.getString("Nhập ngày sinh nhật: "));
+        if (fullName.equals("q")){
+            callLogInView();
+            return;
+        }
+
+        if(!ValidateUtils.isValidName(fullName)){
+            System.err.println("Tên không được phép có ký tự (Nguyen Van A)");
+            inputInforSignIn();
+            return;
+        }
 
         List<Information> information = getAllInfor();
         List<Member> members = getAllMember();
 
+        String phoneNum = InputUtils.getPhoneNumber("Mời nhập số điện thoại: ");
         for (Member member : members){
             if(member.getUsername().equals(phoneNum)){
                 System.err.println("Số điện thoại đã được đăng ký tài khoản");
                 return;
             }
         }
+
+        LocalDate doB = DateUtils.parse(InputUtils.getString("Nhập ngày sinh nhật: "));
 
         Information inforUser = new Information(++Information.currentId, fullName, phoneNum, doB);
 
@@ -110,4 +157,6 @@ public class LoginServiceImpl extends BaseService implements LoginService {
         FileUtils.writeFile(information, Config.PATH_FILE_INFORMATION);
         System.out.println("Gửi thông tin thành công\nKiểm tra điện thoại để nhận tài khoản và mật khẩu");
     }
+
+
 }

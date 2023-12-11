@@ -52,7 +52,7 @@ public class InputUtils {
                 throw new Exception();
             }
         }catch (Exception e) {
-            System.err.println("Dữ liệu không đúng kiểu \nVui lòng nhập lại:");
+            System.err.println("Số điện thoại không đúng\nVui lòng nhập lại:");
             return getPhoneNumber(title);
         }
     }

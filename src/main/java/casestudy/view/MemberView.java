@@ -21,10 +21,12 @@ public class MemberView {
             System.out.printf("%-20s %-30s %20s\n", "|", "3. Chuyển tiền", "|");
             System.out.printf("%-20s %-30s %20s\n", "|", "4. Rút tiền", "|");
             System.out.printf("%-20s %-30s %20s\n", "|", "5. Đăng ký sổ tiết kiệm", "|");
-            System.out.printf("%-20s %-30s %20s\n", "|", "6. Đăng xuất", "|");
+            System.out.printf("%-20s %-30s %20s\n", "|", "6. Kiểm tra sổ tiết kiệm", "|");
+            System.out.printf("%-20s %-30s %20s\n", "|", "7. Kiểm tra lịch sử giao dịch", "|");
+            System.out.printf("%-20s %-30s %20s\n", "|", "8. Đăng xuất", "|");
             System.out.println("------------------------------------------------------------------------");
 
-            int choice = InputUtils.getNumberMinMax("Mời nhập: ", 0 , 6);
+            int choice = InputUtils.getNumberMinMax("Mời nhập: ", 0 , 8);
 
             switch (choice){
                 case 0:
@@ -45,10 +47,24 @@ public class MemberView {
                     registerBankPassBook(member);
                     break;
                 case 6:
+                    checkListPassBook(member);
+                    break;
+                case 7:
+                    checkHistory(member);
+                    break;
+                case 8:
                     logOut();
                     break;
             }
         }while (true);
+    }
+
+    private void checkHistory(Member member) {
+        memberService.showHistoryTransaction(member);
+    }
+
+    private void checkListPassBook(Member member) {
+        memberService.showListPassBook(member);
     }
 
     private void logOut() {

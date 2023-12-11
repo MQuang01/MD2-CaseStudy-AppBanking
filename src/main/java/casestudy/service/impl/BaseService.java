@@ -1,8 +1,6 @@
 package casestudy.service.impl;
 
-import casestudy.model.Admin;
-import casestudy.model.Information;
-import casestudy.model.Member;
+import casestudy.model.*;
 import casestudy.service.AdminService;
 import casestudy.service.LoginService;
 import casestudy.service.MemberService;
@@ -21,19 +19,23 @@ public class BaseService {
     private AdminService adminService;
     private LoginService loginService;
     private MemberService memberService;
+    private PassBookBank passBookBank;
+    private History history;
 
 
     public BaseService() {
     }
 
     public BaseService(AdminView adminView, LoginView loginView, MemberView memberView,
-                       AdminService adminService, LoginService loginService, MemberService memberService) {
+                       AdminService adminService, LoginService loginService, MemberService memberService, PassBookBank passBookBank, History history) {
         this.adminView = adminView;
         this.loginView = loginView;
         this.memberView = memberView;
         this.adminService = adminService;
         this.loginService = loginService;
         this.memberService = memberService;
+        this.passBookBank = passBookBank;
+        this.history = history;
     }
 
     public void callAdminView(Admin admin){
@@ -43,7 +45,7 @@ public class BaseService {
 
     public void callLogInView(){
         loginView = new LoginView(loginService);
-        loginView.logIn();
+        loginView.showMenuView();
     }
 
     public void callMemberView(Member member){
@@ -59,6 +61,9 @@ public class BaseService {
     }
     public List<Admin> getAllAdmin() {
         return FileUtils.readFile(Config.PATH_FILE_ADMIN, Admin.class);
+    }
+    public List<History> getAllHistory() {
+        return FileUtils.readFile(Config.PATH_FILE_HISTORY, History.class);
     }
 
 
@@ -103,11 +108,35 @@ public class BaseService {
         this.loginView = loginView;
     }
 
-    public MemberView getUserView() {
+    public MemberView getMemberView() {
         return memberView;
     }
 
-    public void setUserView(MemberView memberView) {
+    public void setMemberView(MemberView memberView) {
         this.memberView = memberView;
+    }
+
+    public MemberService getMemberService() {
+        return memberService;
+    }
+
+    public void setMemberService(MemberService memberService) {
+        this.memberService = memberService;
+    }
+
+    public PassBookBank getPassBookBank() {
+        return passBookBank;
+    }
+
+    public void setPassBookBank(PassBookBank passBookBank) {
+        this.passBookBank = passBookBank;
+    }
+
+    public History getHistory() {
+        return history;
+    }
+
+    public void setHistory(History history) {
+        this.history = history;
     }
 }

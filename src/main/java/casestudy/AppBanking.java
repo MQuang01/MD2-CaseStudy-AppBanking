@@ -17,7 +17,7 @@ public class AppBanking {
     }
 
     public void run() {
-        loginView.MainView(this);
+        loginView.showMenuView();
     }
 
 

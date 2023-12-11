@@ -1,16 +1,11 @@
 package casestudy.view;
 
 import casestudy.AppBanking;
-import casestudy.model.Information;
 import casestudy.service.LoginService;
 import casestudy.service.impl.LoginServiceImpl;
 import casestudy.utils.Config;
-import casestudy.utils.DateUtils;
 import casestudy.utils.FileUtils;
 import casestudy.utils.InputUtils;
-import java.time.LocalDate;
-import java.util.ArrayList;
-import java.util.List;
 
 public class LoginView {
     private final LoginService loginService;
@@ -36,21 +31,30 @@ public class LoginView {
         }else{
             loginService.setCurrentIdMember();
         }
+
+        if (!FileUtils.checkFileExits(Config.PATH_FILE_HISTORY)){
+            loginService.initHistory();
+        }else{
+            loginService.setCurrentIdHistory();
+        }
     }
 
-    public void MainView(AppBanking appBanking) {
+    public void showMenuView() {
         do {
-            System.out.println("-----------------------------------------------------");
-            System.out.println("|                                                   |");
-            System.out.printf("%-20s %s %20s\n", "|", "App Banking", "|");
-            System.out.println("|                                                   |");
-            System.out.println("-----------------------------------------------------");
-            System.out.printf("%-20s %-11s %20s\n", "|", "1. Login", "|");
-            System.out.printf("%-20s %-11s %20s\n", "|", "2. Sign in", "|");
-            System.out.println("-----------------------------------------------------");
+            System.out.println("------------------------------------------------------");
+            System.out.println("|                                                    |");
+            System.out.printf("%-20s %s %21s\n", "|", "App Banking", "|");
+            System.out.println("|                                                    |");
+            System.out.println("------------------------------------------------------");
+            System.out.printf("%-20s %-12s %20s\n", "|", "1. Đăng nhập", "|");
+            System.out.printf("%-20s %-12s %20s\n", "|", "2. Đăng ký", "|");
+            System.out.printf("%-20s %-12s %20s\n", "|", "0. Thoát", "|");
+            System.out.println("------------------------------------------------------");
 
-            int choice = InputUtils.getNumber("Mời nhập lựa chọn: ");
+            int choice = InputUtils.getNumberMinMax("Mời nhập lựa chọn: ",0,2);
             switch (choice){
+                case 0:
+                    System.exit(-1);
                 case 1:
                     logIn();
                     break;
@@ -62,11 +66,7 @@ public class LoginView {
     }
 
     public void logIn() {
-        String username = InputUtils.getString("Nhập tài khoản: ");
-        String password = InputUtils.getString("Nhập mật khẩu: ");
-
-        loginService.checkLogin(username, password);
-
+        loginService.checkLogin();
     }
 
     private void signIn() {

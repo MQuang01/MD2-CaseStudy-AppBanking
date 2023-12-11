@@ -3,6 +3,8 @@ package casestudy.model;
 import casestudy.utils.DateUtils;
 
 import java.time.LocalDate;
+import java.util.ArrayList;
+import java.util.List;
 
 public class Member implements IParser{
     private long id;
@@ -13,10 +15,13 @@ public class Member implements IParser{
     private LocalDate doB;
     private long balance;
     private ERank eRank;
+    private List<PassBookBank> passBookBanks;
+    public Long passBookBankQuantity;
     public static long currentId;
 
 
     public Member() {
+        passBookBanks = new ArrayList<>();
     }
 
     public Member(long id, String fullName, String phoneNum, LocalDate doB, long balance, ERank eRank) {
@@ -28,6 +33,7 @@ public class Member implements IParser{
         this.doB = doB;
         this.balance = balance;
         this.eRank = eRank;
+        this.passBookBankQuantity = 0L;
     }
 
     public Member(String fullName, String phoneNum, LocalDate doB, long balance, ERank eRank) {
@@ -38,6 +44,11 @@ public class Member implements IParser{
         this.doB = doB;
         this.balance = balance;
         this.eRank = eRank;
+        this.passBookBankQuantity = 0L;
+    }
+
+    public Member(String fullName) {
+        this.fullName = fullName;
     }
 
     public long getId() {
@@ -104,9 +115,26 @@ public class Member implements IParser{
         this.eRank = eRank;
     }
 
+    public List<PassBookBank> getPassBookBanks() {
+        return passBookBanks;
+    }
+
+    public void setPassBookBanks(List<PassBookBank> passBookBanks) {
+        this.passBookBanks = passBookBanks;
+    }
+
+    public Long getPassBookBankQuantity() {
+        return passBookBankQuantity;
+    }
+
+    public void setPassBookBankQuantity(Long passBookBankQuantity) {
+        this.passBookBankQuantity = passBookBankQuantity;
+    }
+
     @Override
     public String toString() {
-        return String.format("%s,%s,%s,%s,%s,%s,%s,%s", id,username,password,phoneNum,fullName,doB,balance,eRank);
+        //1,minhquang,123123,0772717214,Minh Quang,1999-2-12,500000,VIP,3
+        return String.format("%s,%s,%s,%s,%s,%s,%s,%s,%s", id,username,password,phoneNum,fullName,doB,balance,eRank,passBookBankQuantity);
     }
 
     @Override
@@ -122,5 +150,13 @@ public class Member implements IParser{
         this.doB = DateUtils.parse(items[5]);
         this.balance = Long.parseLong(items[6]);
         this.eRank = ERank.valueOf(items[7]);
+
+        if (items[8].equals("null")){
+            this.passBookBankQuantity = 0L;
+        }else {
+            this.passBookBankQuantity = Long.parseLong(items[8]);
+        }
+
+
     }
 }

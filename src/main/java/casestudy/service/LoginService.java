@@ -2,20 +2,28 @@ package casestudy.service;
 
 public interface LoginService {
 
-     void initInfor();
-     void setCurrentIdInfor();
+    void initInfor();
+
+    void setCurrentIdInfor();
 
 
-     void initAdmin();
-     void setCurrentIdAdmin();
+    void initAdmin();
+
+    void setCurrentIdAdmin();
 
 
-     void initMember();
-     void setCurrentIdMember();
+    void initMember();
+
+    void setCurrentIdMember();
+
+    void initHistory();
+
+    void setCurrentIdHistory();
 
 
-
-     void checkLogin(String username, String psw);
+    void checkLogin();
 
     void inputInforSignIn();
+
+
 }

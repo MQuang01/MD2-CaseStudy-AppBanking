@@ -27,10 +27,11 @@ public class AdminView {
             System.out.printf("%-20s %-35s %20s\n", "|", "4. Xóa người dùng", "|");
             System.out.printf("%-20s %-35s %20s\n", "|", "5. Chỉnh sửa người dùng", "|");
             System.out.printf("%-20s %-35s %20s\n", "|", "6. Tìm kiếm người dùng", "|");
-            System.out.printf("%-20s %-35s %20s\n", "|", "7. Đăng xuất", "|");
+            System.out.printf("%-20s %-35s %20s\n", "|", "7. Hiển thị danh sách giao dịch", "|");
+            System.out.printf("%-20s %-35s %20s\n", "|", "8. Đăng xuất", "|");
             System.out.println("-----------------------------------------------------------------------------");
 
-            int choice = InputUtils.getNumberMinMax("Mời nhập: ", 0, 7);
+            int choice = InputUtils.getNumberMinMax("Mời nhập: ", 0, 8);
             switch (choice){
                 case 0:
                     System.exit(-1);
@@ -53,10 +54,17 @@ public class AdminView {
                     findMembber(admin);
                     break;
                 case 7:
+                    showHistory(admin);
+                    break;
+                case 8:
                     logOut();
                     break;
             }
         }while (true);
+    }
+
+    private void showHistory(Admin admin) {
+        adminService.getHistoryList(admin);
     }
 
     private void findMembber(Admin admin) {
