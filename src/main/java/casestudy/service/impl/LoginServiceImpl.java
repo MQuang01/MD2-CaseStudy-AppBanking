@@ -152,7 +152,7 @@ public class LoginServiceImpl extends BaseService implements LoginService {
 
         String dobStr = InputUtils.getString("Nhập ngày sinh nhật: ");
         if(!ValidateUtils.isValidDate(dobStr)){
-            System.err.println("Nhập theo định dạng yyyy-MM-dd");
+            System.err.println("Nhập theo định dạng yyyy-MM-dd (VD: 2000-01-01)");
             inputRegisterInfor();
             return;
         }

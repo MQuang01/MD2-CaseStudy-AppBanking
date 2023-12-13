@@ -17,6 +17,17 @@ import java.util.List;
 
 public class MemberServiceImpl extends BaseService implements MemberService {
     @Override
+    public void getInforMember(Member member) {
+        List<Member> members = getAllMember();
+        for (Member m : members){
+            if(m.getId() == member.getId()){
+                System.out.printf("%20s %20s\n", "Họ và Tên", "Số dư tài khoản");
+                System.out.printf("%20s %20s\n", member.getFullName(), member.getBalance());
+                return;
+            }
+        }
+    }
+    @Override
     public void addMoney(Member member) {
         long money = InputUtils.getNumber("Nhập số tiền muốn nạp: ");
         if (money < 10000 || money > 2000000000){
@@ -44,37 +55,72 @@ public class MemberServiceImpl extends BaseService implements MemberService {
         System.err.println("Nạp tiền không thành công");
     }
     @Override
-    public void getInforMember(Member member) {
-        List<Member> members = getAllMember();
-        for (Member m : members){
-            if(m.getId() == member.getId()){
-                System.out.printf("%20s %20s\n", "Họ và Tên", "Số dư tài khoản");
-                System.out.printf("%20s %20s\n", member.getFullName(), member.getBalance());
-                return;
-            }
-        }
-    }
-    @Override
     public void transferTo(Member member) {
-        List<Member> members = getAllMember();
+        getInforMember(member);
         String numberCard = InputUtils.getString("Chuyển đến số tài khoản: ");
         if (numberCard.equals(member.getUsername())){
             System.err.println("Không thể chuyển tiền vào số tài khoản của bạn");
+            transferTo(member);
+            return;
         }
 
+        inputMoneyForTransfer(numberCard, member);
+//        List<Member> members = getAllMember();
+//        for (Member m : members){
+//            if(m.getUsername().equals(numberCard)){
+//                long money = InputUtils.getNumber("Nhập số tiền cần chuyển: ");
+//
+//                if(m.getBalance() < money){
+//                    System.err.println("Tài khoản không đủ");
+//                    callMemberView(member);
+//                    return;
+//                }else if (money < 10000 || money > 100000000){
+//                    System.err.println("Rút tối thiểu 10 nghìn đồng và tối đa 100 triệu");
+//                    transferTo(member);
+//                    return;
+//                } else {
+//                    // trừ tiền tài khoản
+//                    for (Member m1 : members){
+//                        if (m1.getUsername().equals(member.getUsername())){
+//                            m1.setBalance(m1.getBalance() - money);
+//                        }
+//                    }
+//                    member.setBalance(member.getBalance() - money);
+//
+//                    // nạp tiền tài khoản
+//                    m.setBalance(m.getBalance() + money);
+//
+//                    History history1 = new History(++History.currentId, member, "-" + money, "Chuyển tiền", LocalDate.now());
+//                    History history2 = new History(++History.currentId, m, "+" + money, "Nhận tiền", LocalDate.now());
+//                    List<History> histories = getAllHistory();
+//                    histories.add(history1);
+//                    histories.add(history2);
+//
+//                    FileUtils.writeFile(histories, Config.PATH_FILE_HISTORY);
+//                    FileUtils.writeFile(members, Config.PATH_FILE_MEMBER);
+//                    System.out.println("Đã chuyển thành công");
+//                    return;
+//                }
+//            }
+//        }
+//        System.err.println("Không tìm thấy số tài khoản người nhận");
+    }
+    private void inputMoneyForTransfer(String numberCard, Member member){
+        List<Member> members = getAllMember();
         for (Member m : members){
             if(m.getUsername().equals(numberCard)){
                 long money = InputUtils.getNumber("Nhập số tiền cần chuyển: ");
 
-                if(member.getBalance() < money){
+                if(m.getBalance() < money){
                     System.err.println("Tài khoản không đủ");
                     callMemberView(member);
+                    return;
                 }else if (money < 10000 || money > 100000000){
-                    System.err.println("Rút tối thiểu 10 nghìn đồng và tối đa 100 triệu");
-                    transferTo(member);
+                    System.err.println("Chuyển tối thiểu 10 nghìn đồng và tối đa 100 triệu");
+                    inputMoneyForTransfer(numberCard, member);
                     return;
                 } else {
-                    // trừ tiền tài khoản
+                    // người chuyển trừ tiền
                     for (Member m1 : members){
                         if (m1.getUsername().equals(member.getUsername())){
                             m1.setBalance(m1.getBalance() - money);
@@ -82,7 +128,7 @@ public class MemberServiceImpl extends BaseService implements MemberService {
                     }
                     member.setBalance(member.getBalance() - money);
 
-                    // nạp tiền tài khoản
+                    // người được chuyển nhận tiền
                     m.setBalance(m.getBalance() + money);
 
                     History history1 = new History(++History.currentId, member, "-" + money, "Chuyển tiền", LocalDate.now());
@@ -103,21 +149,25 @@ public class MemberServiceImpl extends BaseService implements MemberService {
 
     @Override
     public void getMoney(Member member) {
+        long money = InputUtils.getNumber("Nhập số tiền cần rút (Nhập 0 để quay lại): ");
+        if (money == 0){
+            callMemberView(member);
+            return;
+        }
 
-        long money = InputUtils.getNumber("Nhập số tiền cần rút: ");
         if (money < 10000 || money > 100000000){
             System.err.println("Rút tối thiểu 10 nghìn đồng và tối đa 100 triệu");
             getMoney(member);
             return;
         }
 
-
-
         List<Member> members = getAllMember();
         for (Member m : members){
             if(m.getBalance() < money){
                 System.err.println("Số dư tài khoản không đủ");
-                callMemberView(member);
+                getInforMember(member);
+                getMoney(member);
+                return;
             }else {
                 m.setBalance(m.getBalance() - money);
                 member.setBalance(member.getBalance() - money);
@@ -161,7 +211,7 @@ public class MemberServiceImpl extends BaseService implements MemberService {
 
                 if(checkStatus.equals("Đã rút")){
                     psBook.setValueOfBook(0);
-                    member.setBalance(member.getBalance() + psBook.getValueOfBook());
+                    member.setBalance(member.getBalance() + Long.parseLong(String.valueOf(Math.round((psBook.getValueOfBook() * Math.pow(1 + 0.041, 24)) * 100 / 100))));
                 }
             }
         }else {
